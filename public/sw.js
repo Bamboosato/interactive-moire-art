@@ -1,4 +1,4 @@
-const CACHE_NAME = 'interactive-cmyk-moire-v2';
+const CACHE_NAME = 'interactive-cmyk-moire-v3';
 const STATIC_ASSETS = [
   './',
   './index.html',
