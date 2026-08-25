@@ -1,0 +1,32 @@
+# Dependencies and build output
+node_modules/
+dist/
+.vite/
+coverage/
+*.tsbuildinfo
+
+# Local environment files
+.env
+.env.*
+!.env.example
+*.local
+
+# Test and browser automation artifacts
+playwright-report/
+test-results/
+.playwright-cli/
+.playwright-mcp/
+output/playwright/
+
+# Logs and operating-system files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
+
+# Editor settings
+.idea/
+.vscode/*
+!.vscode/extensions.json

@@ -1,0 +1,28 @@
+{
+  "name": "interactive-cmyk-moire",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Local-first interactive CMYK moiré generative art canvas built with React, TypeScript, WebGL2, GLSL ES 3.00, Tailwind CSS, and IndexedDB.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.13",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "tailwindcss": "^4.1.13",
+    "vite": "^7.1.7"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.4",
+    "typescript": "~5.8.3",
+    "vitest": "^3.2.4"
+  }
+}
