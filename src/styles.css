@@ -158,9 +158,9 @@ button:disabled { cursor: not-allowed; opacity: 0.45; }
 .mobile-only, .mobile-panel-scrim { display: none; }
 
 .workspace-grid-view { display: block; }
-.workspace-grid-view .canvas-stage { position: fixed; z-index: 1000; inset: 0; width: 100vw; width: 100dvw; height: 100vh; height: 100dvh; min-height: 100vh; min-height: 100dvh; max-width: none; border: 0; border-radius: 0; background: #000; box-shadow: none; }
+.workspace-grid-view .canvas-stage { position: fixed; z-index: 1000; inset: 0; width: 100vw; width: 100dvw; height: 100vh; height: 100dvh; min-height: 100vh; min-height: 100dvh; max-width: none; border: 0; border-radius: 0; background: #101014; box-shadow: none; }
 .workspace-grid-view .moire-canvas { width: 100%; height: 100%; }
-.canvas-stage:fullscreen, .canvas-stage:-webkit-full-screen { width: 100vw; height: 100dvh; max-width: none; border: 0; border-radius: 0; background: #000; }
+.canvas-stage:fullscreen, .canvas-stage:-webkit-full-screen { width: 100vw; height: 100dvh; max-width: none; border: 0; border-radius: 0; background: #101014; }
 
 @media (max-width: 768px) {
   .app-header { padding-top: max(1.1rem, env(safe-area-inset-top)); }
@@ -172,7 +172,6 @@ button:disabled { cursor: not-allowed; opacity: 0.45; }
   .mobile-panel-scrim { position: fixed; z-index: 20; inset: 0; display: block; border: 0; background: rgb(0 0 0 / 48%); }
   .action-bar { padding-bottom: max(0.25rem, env(safe-area-inset-bottom)); }
   .action-bar > * { flex: 1 1 calc(50% - 0.65rem); }
-  .workspace-grid-view .canvas-stage { padding-bottom: env(safe-area-inset-bottom); }
 }
 
 @media (min-width: 769px) {
