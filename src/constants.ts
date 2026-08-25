@@ -20,6 +20,7 @@ export const COPY = {
   reset: 'Reset',
   savePng: 'Save PNG',
   fullscreen: 'Fullscreen',
+  exit: 'Exit',
   exitFullscreen: 'Exit fullscreen',
   exitCanvasView: 'Exit canvas view',
   close: 'Close',

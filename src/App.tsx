@@ -748,7 +748,7 @@ export default function App() {
             {renderError && <div className="canvas-error" role="alert">{renderError}</div>}
             {viewMode !== 'normal' && (
               <button className="canvas-exit-button" type="button" onClick={exitView}>
-                {viewMode === 'fullscreen' ? COPY.exitFullscreen : COPY.exitCanvasView}
+                {COPY.exit}
               </button>
             )}
           </div>
