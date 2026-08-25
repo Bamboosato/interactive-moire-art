@@ -55,11 +55,20 @@ function errorMessage(error: unknown, fallback: string): string {
 function useIsStandalone(): boolean {
   const [standalone, setStandalone] = useState(false);
   useEffect(() => {
-    const media = window.matchMedia?.('(display-mode: standalone)');
-    const update = () => setStandalone(Boolean(media?.matches || (navigator as Navigator & { standalone?: boolean }).standalone));
+    const standaloneMedia = window.matchMedia?.('(display-mode: standalone)');
+    const fullscreenMedia = window.matchMedia?.('(display-mode: fullscreen)');
+    const update = () => setStandalone(Boolean(
+      standaloneMedia?.matches
+      || fullscreenMedia?.matches
+      || (navigator as Navigator & { standalone?: boolean }).standalone,
+    ));
     update();
-    media?.addEventListener?.('change', update);
-    return () => media?.removeEventListener?.('change', update);
+    standaloneMedia?.addEventListener?.('change', update);
+    fullscreenMedia?.addEventListener?.('change', update);
+    return () => {
+      standaloneMedia?.removeEventListener?.('change', update);
+      fullscreenMedia?.removeEventListener?.('change', update);
+    };
   }, []);
   return standalone;
 }
@@ -545,13 +554,13 @@ export default function App() {
   };
 
   const enterFullscreen = async () => {
-    if (standalone) {
-      setViewMode('canvas');
-      setPanelOpen(false);
-      return;
-    }
     const stage = canvasStageRef.current as (HTMLElement & { requestFullscreen?: () => Promise<void> }) | null;
     if (!stage?.requestFullscreen) {
+      if (standalone) {
+        setViewMode('canvas');
+        setPanelOpen(false);
+        return;
+      }
       setOperationMessage(COPY.fullscreenUnavailable);
       return;
     }
@@ -560,6 +569,11 @@ export default function App() {
       setViewMode('fullscreen');
       setPanelOpen(false);
     } catch {
+      if (standalone) {
+        setViewMode('canvas');
+        setPanelOpen(false);
+        return;
+      }
       setOperationMessage(COPY.fullscreenFailed);
     }
   };
@@ -857,8 +871,7 @@ export default function App() {
           <button type="button" className="button-primary" onClick={togglePlayback}>{playing ? COPY.pause : COPY.play}</button>
           <button type="button" className="button-secondary" onClick={randomize}>{COPY.randomize}</button>
           <button type="button" className="button-secondary" onClick={savePng}>{COPY.savePng}</button>
-          {!standalone && <button ref={fullscreenButtonRef} type="button" className="button-secondary" onClick={enterFullscreen}>{COPY.fullscreen}</button>}
-          {standalone && <button ref={fullscreenButtonRef} type="button" className="button-secondary" onClick={enterFullscreen}>{COPY.canvasView}</button>}
+          <button ref={fullscreenButtonRef} type="button" className="button-secondary" onClick={enterFullscreen}>{COPY.fullscreen}</button>
         </nav>}
 
         {viewMode === 'normal' && (storageMessage || operationMessage) && <p className="status-line" role="status">{storageMessage || operationMessage}</p>}
