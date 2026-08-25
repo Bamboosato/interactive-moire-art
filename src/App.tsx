@@ -26,6 +26,7 @@ type DialogState =
 
 const CENTER_POINTER: PointerPosition = { x: 0.5, y: 0.5, active: false };
 const RESIZE_SETTLE_MS = 80;
+const APP_CANVAS_VIEW_QUERY = '(max-width: 820px), (pointer: coarse)';
 
 function prefersReducedMotion(): boolean {
   return typeof window !== 'undefined'
@@ -52,25 +53,8 @@ function errorMessage(error: unknown, fallback: string): string {
   return error instanceof Error && error.message ? error.message : fallback;
 }
 
-function useIsStandalone(): boolean {
-  const [standalone, setStandalone] = useState(false);
-  useEffect(() => {
-    const standaloneMedia = window.matchMedia?.('(display-mode: standalone)');
-    const fullscreenMedia = window.matchMedia?.('(display-mode: fullscreen)');
-    const update = () => setStandalone(Boolean(
-      standaloneMedia?.matches
-      || fullscreenMedia?.matches
-      || (navigator as Navigator & { standalone?: boolean }).standalone,
-    ));
-    update();
-    standaloneMedia?.addEventListener?.('change', update);
-    fullscreenMedia?.addEventListener?.('change', update);
-    return () => {
-      standaloneMedia?.removeEventListener?.('change', update);
-      fullscreenMedia?.removeEventListener?.('change', update);
-    };
-  }, []);
-  return standalone;
+function shouldUseAppCanvasView(): boolean {
+  return typeof window.matchMedia === 'function' && window.matchMedia(APP_CANVAS_VIEW_QUERY).matches;
 }
 
 function PresetDialog({
@@ -186,7 +170,6 @@ export default function App() {
   const [dialogBusy, setDialogBusy] = useState(false);
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [swRegistration, setSwRegistration] = useState<ServiceWorkerRegistration | null>(null);
-  const standalone = useIsStandalone();
 
   const allPresets = useMemo<PresetEntry[]>(() => [...builtIns, ...userPresets], [builtIns, userPresets]);
   const selectedPreset = allPresets.find((entry) => entry.id === selectedPresetId) ?? null;
@@ -555,13 +538,9 @@ export default function App() {
 
   const enterFullscreen = async () => {
     const stage = canvasStageRef.current as (HTMLElement & { requestFullscreen?: () => Promise<void> }) | null;
-    if (!stage?.requestFullscreen) {
-      if (standalone) {
-        setViewMode('canvas');
-        setPanelOpen(false);
-        return;
-      }
-      setOperationMessage(COPY.fullscreenUnavailable);
+    if (shouldUseAppCanvasView() || !stage?.requestFullscreen) {
+      setViewMode('canvas');
+      setPanelOpen(false);
       return;
     }
     try {
@@ -569,12 +548,8 @@ export default function App() {
       setViewMode('fullscreen');
       setPanelOpen(false);
     } catch {
-      if (standalone) {
-        setViewMode('canvas');
-        setPanelOpen(false);
-        return;
-      }
-      setOperationMessage(COPY.fullscreenFailed);
+      setViewMode('canvas');
+      setPanelOpen(false);
     }
   };
 
