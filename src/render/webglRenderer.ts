@@ -129,13 +129,16 @@ float valueNoise3D(vec3 point, uint seed) {
 }
 
 float fbm3D(vec3 point, uint seed) {
-  float fourthOctaveWeight = smoothstep(0.5, 0.75, uQuality);
+  // The fourth octave adds fine detail but is expensive because every layer
+  // evaluates FBM independently. Fade it out before the lowest quality tier
+  // so the 0.75 quality target also provides a measurable GPU relief.
+  float fourthOctaveWeight = smoothstep(0.75, 1.0, uQuality);
   float amplitude = 0.5;
   float frequency = 1.0;
   float value = 0.0;
   float amplitudeSum = 0.0;
   for (int octave = 0; octave < 4; octave += 1) {
-    if (octave == 3 && uQuality <= 0.5) break;
+    if (octave == 3 && uQuality <= 0.75) break;
     float octaveWeight = octave == 3 ? fourthOctaveWeight : 1.0;
     value += valueNoise3D(point * frequency, seed + uint(octave) * 1013u) * amplitude * octaveWeight;
     amplitudeSum += amplitude * octaveWeight;

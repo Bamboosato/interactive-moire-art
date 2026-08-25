@@ -49,6 +49,8 @@ describe('WebGL renderer helpers', () => {
     expect(FRAGMENT_SHADER_SOURCE).toContain('fwidth');
     expect(FRAGMENT_SHADER_SOURCE).toContain('fbm3D');
     expect(FRAGMENT_SHADER_SOURCE).toContain('fourthOctaveWeight');
+    expect(FRAGMENT_SHADER_SOURCE).toContain('smoothstep(0.75, 1.0, uQuality)');
+    expect(FRAGMENT_SHADER_SOURCE).toContain('octave == 3 && uQuality <= 0.75');
     expect(FRAGMENT_SHADER_SOURCE).toContain('uLayerVisible');
     expect(FRAGMENT_SHADER_SOURCE).toContain('uPointerStrength');
     expect(FRAGMENT_SHADER_SOURCE).toContain('uTime * 0.18');
