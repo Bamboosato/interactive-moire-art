@@ -259,7 +259,7 @@ export default function App() {
   useEffect(() => {
     let cancelled = false;
     if (!import.meta.env.PROD || !('serviceWorker' in navigator)) return undefined;
-    navigator.serviceWorker.register('/sw.js').then((registration) => {
+    navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).then((registration) => {
       if (cancelled) return;
       setSwRegistration(registration);
       if (registration.waiting) setUpdateAvailable(true);
@@ -717,8 +717,23 @@ export default function App() {
           <div className="status-banner" role="status">
             <span>{COPY.updateAvailable}</span>
             <button type="button" className="button-small" onClick={() => {
-              swRegistration?.waiting?.postMessage({ type: 'SKIP_WAITING' });
-              window.location.reload();
+              const waiting = swRegistration?.waiting;
+              if (!waiting || !navigator.serviceWorker) {
+                window.location.reload();
+                return;
+              }
+
+              let reloaded = false;
+              const reload = () => {
+                if (reloaded) return;
+                reloaded = true;
+                navigator.serviceWorker.removeEventListener('controllerchange', reload);
+                window.location.reload();
+              };
+
+              navigator.serviceWorker.addEventListener('controllerchange', reload, { once: true });
+              waiting.postMessage({ type: 'SKIP_WAITING' });
+              window.setTimeout(reload, 2000);
             }}>{COPY.reload}</button>
           </div>
         )}
