@@ -91,9 +91,9 @@ export const LAYER_DEFINITIONS: Record<LayerKey, {
   isMask: boolean;
 }> = {
   c: { label: 'C', color: '#00C8FF', opacity: 0.70, offsetX: 0, offsetY: 0, noisePhase: 0, timePhase: 0, displacementScale: 1, isMask: false },
-  m: { label: 'M', color: '#FF2DAA', opacity: 0.64, offsetX: 1.5, offsetY: -1, noisePhase: 0.10, timePhase: 0.08, displacementScale: 1.02, isMask: false },
-  y: { label: 'Y', color: '#FFE94A', opacity: 0.58, offsetX: -1.5, offsetY: 0.75, noisePhase: 0.18, timePhase: 0.16, displacementScale: 0.98, isMask: false },
-  k: { label: 'K', color: '#000000', opacity: 0.30, offsetX: 0.75, offsetY: 1.5, noisePhase: 0.24, timePhase: 0.24, displacementScale: 1, isMask: true },
+  m: { label: 'M', color: '#FF2DAA', opacity: 0.64, offsetX: 0.3, offsetY: -0.2, noisePhase: 0.03, timePhase: 0.02, displacementScale: 1.01, isMask: false },
+  y: { label: 'Y', color: '#FFE94A', opacity: 0.58, offsetX: -0.3, offsetY: 0.2, noisePhase: 0.06, timePhase: 0.04, displacementScale: 0.99, isMask: false },
+  k: { label: 'K', color: '#000000', opacity: 0.30, offsetX: 0.2, offsetY: 0.3, noisePhase: 0.08, timePhase: 0.06, displacementScale: 1, isMask: true },
 };
 
 export const LAYER_KEYS: LayerKey[] = ['c', 'm', 'y', 'k'];
@@ -143,8 +143,8 @@ export const BUILT_IN_PRESETS = [
   {
     id: 'builtin-ink-bloom',
     name: 'Ink Bloom',
-    description: 'Dense dark intersections and bright accents',
-    overrides: { lineSpacing: 2.7, thickness: 1.2, noiseStrength: 42, noiseScale: 0.007, interactionStrength: 72, influenceRadius: 140, speed: 0.35, mode: 'dot' as const, randomSeed: 193847562 },
+    description: 'Dense ink-like dots with controlled movement',
+    overrides: { lineSpacing: 3, thickness: 0.9, noiseStrength: 32, noiseScale: 0.005, interactionStrength: 54, influenceRadius: 150, speed: 0.24, mode: 'dot' as const, randomSeed: 193847562 },
   },
   {
     id: 'builtin-dotmatrix-interpolation',
