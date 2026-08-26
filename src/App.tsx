@@ -26,7 +26,6 @@ type DialogState =
 
 const CENTER_POINTER: PointerPosition = { x: 0.5, y: 0.5, active: false };
 const RESIZE_SETTLE_MS = 80;
-const APP_CANVAS_VIEW_QUERY = '(max-width: 820px), (pointer: coarse)';
 
 function prefersReducedMotion(): boolean {
   return typeof window !== 'undefined'
@@ -51,10 +50,6 @@ function presetSettings(entry: PresetEntry): RenderSettings {
 
 function errorMessage(error: unknown, fallback: string): string {
   return error instanceof Error && error.message ? error.message : fallback;
-}
-
-function shouldUseAppCanvasView(): boolean {
-  return typeof window.matchMedia === 'function' && window.matchMedia(APP_CANVAS_VIEW_QUERY).matches;
 }
 
 function PresetDialog({
@@ -538,7 +533,7 @@ export default function App() {
 
   const enterFullscreen = async () => {
     const stage = canvasStageRef.current as (HTMLElement & { requestFullscreen?: () => Promise<void> }) | null;
-    if (shouldUseAppCanvasView() || !stage?.requestFullscreen) {
+    if (!stage?.requestFullscreen) {
       setViewMode('canvas');
       setPanelOpen(false);
       return;
@@ -739,33 +734,44 @@ export default function App() {
         )}
 
         <section className={`workspace-grid ${viewMode !== 'normal' ? 'workspace-grid-view' : ''}`}>
-          <div
-            ref={canvasStageRef}
-            className="canvas-stage"
-            aria-label={viewMode === 'fullscreen' ? COPY.exitFullscreen : COPY.appTitle}
-          >
-            <canvas
-              ref={canvasRef}
-              className="moire-canvas"
-              tabIndex={0}
-              aria-label="Interactive moiré artwork"
-              onPointerDown={(event) => {
-                if (!event.isPrimary) return;
-                if (event.currentTarget.setPointerCapture) event.currentTarget.setPointerCapture(event.pointerId);
-                setPointerFromEvent(event);
-              }}
-              onPointerMove={(event) => { if (event.isPrimary && (event.pointerType !== 'mouse' || event.buttons > 0)) setPointerFromEvent(event); }}
-              onPointerLeave={(event) => { if (event.isPrimary && event.pointerType === 'mouse') recenterPointer(); }}
-              onPointerUp={(event) => { if (!event.isPrimary) return; if (event.currentTarget.hasPointerCapture?.(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId); recenterPointer(); }}
-              onPointerCancel={recenterPointer}
-              onKeyDown={handleCanvasKeyDown}
-            />
-            {renderError && <div className="canvas-error" role="alert">{renderError}</div>}
-            {viewMode !== 'normal' && (
-              <button className="canvas-exit-button" type="button" onClick={exitView}>
-                {COPY.exit}
-              </button>
-            )}
+          <div className="canvas-column">
+            <div
+              ref={canvasStageRef}
+              className="canvas-stage"
+              aria-label={viewMode === 'fullscreen' ? COPY.exitFullscreen : COPY.appTitle}
+            >
+              <canvas
+                ref={canvasRef}
+                className="moire-canvas"
+                tabIndex={0}
+                aria-label="Interactive moiré artwork"
+                onPointerDown={(event) => {
+                  if (!event.isPrimary) return;
+                  if (event.currentTarget.setPointerCapture) event.currentTarget.setPointerCapture(event.pointerId);
+                  setPointerFromEvent(event);
+                }}
+                onPointerMove={(event) => { if (event.isPrimary && (event.pointerType !== 'mouse' || event.buttons > 0)) setPointerFromEvent(event); }}
+                onPointerLeave={(event) => { if (event.isPrimary && event.pointerType === 'mouse') recenterPointer(); }}
+                onPointerUp={(event) => { if (!event.isPrimary) return; if (event.currentTarget.hasPointerCapture?.(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId); recenterPointer(); }}
+                onPointerCancel={recenterPointer}
+                onKeyDown={handleCanvasKeyDown}
+              />
+              {renderError && <div className="canvas-error" role="alert">{renderError}</div>}
+              {viewMode !== 'normal' && (
+                <button className="canvas-exit-button" type="button" onClick={exitView}>
+                  {COPY.exit}
+                </button>
+              )}
+            </div>
+
+            {viewMode === 'normal' && <nav className="action-bar" aria-label="Canvas actions">
+              <button type="button" className="button-primary" onClick={togglePlayback}>{playing ? COPY.pause : COPY.play}</button>
+              <button type="button" className="button-secondary" onClick={randomize}>{COPY.randomize}</button>
+              <button type="button" className="button-secondary" onClick={savePng}>{COPY.savePng}</button>
+              <button ref={fullscreenButtonRef} type="button" className="button-secondary" onClick={enterFullscreen}>{COPY.fullscreen}</button>
+            </nav>}
+
+            {viewMode === 'normal' && (storageMessage || operationMessage) && <p className="status-line" role="status">{storageMessage || operationMessage}</p>}
           </div>
 
           {viewMode === 'normal' && <aside ref={settingsPanelRef} id="settings-panel" className={`settings-panel ${panelOpen ? 'settings-panel-open' : ''}`} aria-label={COPY.settings}>
@@ -856,15 +862,6 @@ export default function App() {
             </div>
           </aside>}
         </section>
-
-        {viewMode === 'normal' && <nav className="action-bar" aria-label="Canvas actions">
-          <button type="button" className="button-primary" onClick={togglePlayback}>{playing ? COPY.pause : COPY.play}</button>
-          <button type="button" className="button-secondary" onClick={randomize}>{COPY.randomize}</button>
-          <button type="button" className="button-secondary" onClick={savePng}>{COPY.savePng}</button>
-          <button ref={fullscreenButtonRef} type="button" className="button-secondary" onClick={enterFullscreen}>{COPY.fullscreen}</button>
-        </nav>}
-
-        {viewMode === 'normal' && (storageMessage || operationMessage) && <p className="status-line" role="status">{storageMessage || operationMessage}</p>}
       </main>
 
       {panelOpen && viewMode === 'normal' && <button className="mobile-panel-scrim" type="button" aria-label={COPY.closeSettings} onClick={closeSettings} />}
