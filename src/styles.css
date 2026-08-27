@@ -111,6 +111,7 @@ button:disabled { cursor: not-allowed; opacity: 0.45; }
 .range-input:focus-visible { outline: 2px solid #f3c55f; outline-offset: 3px; }
 
 .layers-section, .presets-section { margin-top: 1.25rem; border-top: 1px solid rgb(255 255 255 / 9%); padding-top: 1.1rem; }
+.settings-scroll > .presets-section { margin-top: 0; }
 .layer-list { display: grid; gap: 0.6rem; margin-top: 0.65rem; }
 .layer-card { display: grid; grid-template-columns: minmax(3rem, 1fr); align-items: center; gap: 0.45rem; padding: 0.6rem; border: 1px solid rgb(255 255 255 / 8%); border-radius: 8px; background: rgb(38 34 43 / 55%); }
 .layer-title { display: flex; align-items: center; gap: 0.45rem; color: #f7efe2; font-size: 0.75rem; }
