@@ -784,6 +784,41 @@ export default function App() {
             </div>
 
             <div className="settings-scroll">
+              <section className="presets-section" aria-labelledby="presets-heading">
+                <div className="field-label-row"><h3 id="presets-heading" className="field-label">{COPY.presets}</h3><span className="text-xs text-app-muted">{userPresets.length}/100</span></div>
+                <label className="sr-only" htmlFor="preset-select">{COPY.presets}</label>
+                <select
+                  id="preset-select"
+                  className="control-input preset-select"
+                  value={selectedPresetId}
+                  aria-describedby={presetDirty ? 'preset-dirty-state' : undefined}
+                  onChange={(event) => {
+                    const entry = allPresets.find((candidate) => candidate.id === event.target.value);
+                    if (entry) selectPreset(entry);
+                  }}
+                >
+                  <optgroup label={COPY.builtIn}>
+                    {builtIns.map((entry) => <option key={entry.id} value={entry.id}>{entry.name}</option>)}
+                  </optgroup>
+                  {userPresets.length > 0 && (
+                    <optgroup label={COPY.saved}>
+                      {userPresets.map((entry) => <option key={entry.id} value={entry.id}>{entry.name}</option>)}
+                    </optgroup>
+                  )}
+                </select>
+                {userPresets.length === 0 && <p className="empty-presets">{COPY.noSavedPresets}</p>}
+                <div className="preset-actions">
+                  <button type="button" className="button-primary flex-1" onClick={(event) => openDialog({ kind: 'save', name: '' }, event.currentTarget)}>{COPY.saveAsNew}</button>
+                  <button type="button" className="button-secondary" disabled={!selectedPreset} onClick={() => selectedPreset && requestLoad(selectedPreset)}>{COPY.load}</button>
+                </div>
+                <div className="preset-actions">
+                  <button type="button" className="button-secondary flex-1" disabled={!selectedCustom} onClick={(event) => selectedCustom && openDialog({ kind: 'overwrite', entry: selectedCustom }, event.currentTarget)}>{COPY.overwrite}</button>
+                  <button type="button" className="button-secondary" disabled={!selectedCustom} onClick={(event) => selectedCustom && openDialog({ kind: 'rename', name: selectedCustom.name, entry: selectedCustom }, event.currentTarget)}>{COPY.rename}</button>
+                  <button type="button" className="button-danger" disabled={!selectedCustom} onClick={(event) => selectedCustom && openDialog({ kind: 'delete', entry: selectedCustom }, event.currentTarget)}>{COPY.delete}</button>
+                </div>
+                {presetDirty && <p id="preset-dirty-state" className="dirty-state" role="status">{COPY.unsavedChanges}</p>}
+              </section>
+
               <div className="control-group">
                 <label className="field-label" htmlFor="mode">{COPY.mode}</label>
                 <select id="mode" className="control-input" value={settings.mode} onChange={(event) => updateSettings({ ...settings, mode: event.target.value as RenderSettings['mode'] })}>
@@ -818,41 +853,6 @@ export default function App() {
                   ))}
                 </div>
                 {LAYER_KEYS.every((key) => !settings.layers[key].visible) && <p className="empty-presets" role="status">{COPY.noVisibleLayer}</p>}
-              </section>
-
-              <section className="presets-section" aria-labelledby="presets-heading">
-                <div className="field-label-row"><h3 id="presets-heading" className="field-label">{COPY.presets}</h3><span className="text-xs text-app-muted">{userPresets.length}/100</span></div>
-                <label className="sr-only" htmlFor="preset-select">{COPY.presets}</label>
-                <select
-                  id="preset-select"
-                  className="control-input preset-select"
-                  value={selectedPresetId}
-                  aria-describedby={presetDirty ? 'preset-dirty-state' : undefined}
-                  onChange={(event) => {
-                    const entry = allPresets.find((candidate) => candidate.id === event.target.value);
-                    if (entry) selectPreset(entry);
-                  }}
-                >
-                  <optgroup label={COPY.builtIn}>
-                    {builtIns.map((entry) => <option key={entry.id} value={entry.id}>{entry.name}</option>)}
-                  </optgroup>
-                  {userPresets.length > 0 && (
-                    <optgroup label={COPY.saved}>
-                      {userPresets.map((entry) => <option key={entry.id} value={entry.id}>{entry.name}</option>)}
-                    </optgroup>
-                  )}
-                </select>
-                {userPresets.length === 0 && <p className="empty-presets">{COPY.noSavedPresets}</p>}
-                <div className="preset-actions">
-                  <button type="button" className="button-primary flex-1" onClick={(event) => openDialog({ kind: 'save', name: '' }, event.currentTarget)}>{COPY.saveAsNew}</button>
-                  <button type="button" className="button-secondary" disabled={!selectedPreset} onClick={() => selectedPreset && requestLoad(selectedPreset)}>{COPY.load}</button>
-                </div>
-                <div className="preset-actions">
-                  <button type="button" className="button-secondary flex-1" disabled={!selectedCustom} onClick={(event) => selectedCustom && openDialog({ kind: 'overwrite', entry: selectedCustom }, event.currentTarget)}>{COPY.overwrite}</button>
-                  <button type="button" className="button-secondary" disabled={!selectedCustom} onClick={(event) => selectedCustom && openDialog({ kind: 'rename', name: selectedCustom.name, entry: selectedCustom }, event.currentTarget)}>{COPY.rename}</button>
-                  <button type="button" className="button-danger" disabled={!selectedCustom} onClick={(event) => selectedCustom && openDialog({ kind: 'delete', entry: selectedCustom }, event.currentTarget)}>{COPY.delete}</button>
-                </div>
-                {presetDirty && <p id="preset-dirty-state" className="dirty-state" role="status">{COPY.unsavedChanges}</p>}
               </section>
             </div>
 
