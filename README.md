@@ -21,7 +21,7 @@ The app is local-first: the artwork is rendered with WebGL2 and GLSL ES 3.00, cu
 
 ## Requirements
 
-- Node.js `^20.19.0 || >=22.12.0`, matching the Vite and React plugin requirements in `package-lock.json`.
+- Node.js `^20.19.0 || ^22.12.0 || >=24.0.0`, matching the Vite, React plugin, and Vitest requirements in `package-lock.json`.
 - A modern browser with WebGL2 for artwork rendering and IndexedDB for persistent settings and presets.
 - HTTPS or localhost, plus Service Worker and Cache Storage support, for PWA caching. Rendering does not require a Service Worker.
 
